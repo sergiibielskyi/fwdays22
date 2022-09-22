@@ -1,5 +1,7 @@
 using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Cosmos;
+using Newtonsoft.Json;
 
 namespace Query.Controllers;
 
@@ -11,10 +13,19 @@ public class QueryController : ControllerBase
     private readonly ILogger<QueryController> _logger;
     private DaprClient daprClient;
     private const string storeName = "cosmosdb";
+    private readonly string EndpointUri = "https://fwdaysaccount.documents.azure.com:443/";
+    private readonly string PrimaryKey = "";
+    private readonly string databaseId = "fwDaysDB";
+    private readonly string containerId = "fwDaysContainer";
+    private IDataService iDataService;
 
-    public QueryController(ILogger<QueryController> logger)
+    private CosmosClient dbClient;
+
+    public QueryController(ILogger<QueryController> logger, IDataService dataService)
     {
         daprClient = new DaprClientBuilder().Build();
+        dbClient = new CosmosClient(EndpointUri, PrimaryKey);
+        iDataService = dataService;
         _logger = logger;
     }
 
@@ -45,5 +56,15 @@ public class QueryController : ControllerBase
     public async Task<dynamic> GetById([FromRoute] string id)
     {
         return await daprClient.GetStateAsync<dynamic>(storeName, id);
+    }
+
+    [HttpGet]
+    [Route("objects/all")]
+    public async Task<List<dynamic>> GetAll([FromHeader] string country)
+    {
+        List<dynamic> objects = await iDataService.GetAllData(databaseId, containerId, dbClient, country);
+         _logger.LogInformation(objects.Count.ToString());
+
+        return objects;
     }
 }

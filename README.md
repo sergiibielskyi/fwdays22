@@ -60,7 +60,7 @@ Grant own permissions to generate certificate and all permissions in secrets
 Generate certificate and upload to project directory PFX and azure app registration
 
 ----
-
+Sample 1. Issues with query usage
 Create new project webapi
 dotnet new webapi in Query directory
 
@@ -83,3 +83,14 @@ Create Container Apps
 az deployment group create \
 --resource-group "$NAME_RG" \
 --template-file ./DevOps/Main.bicep
+
+----
+Added Cosmos DB API as workaround
+dotnet add package Microsoft.Azure.Cosmos --version 3.30.1
+
+----
+Add new methods using cosmosDB API to explain results
+
+
+----
+Sample 2. Issues with using http requests
