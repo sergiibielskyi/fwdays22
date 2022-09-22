@@ -52,12 +52,13 @@ public class QueryController : ControllerBase
     }
 
     [HttpGet]
-    [Route("objects/{id}")]
+    [Route("object/{id}")]
     public async Task<dynamic> GetById([FromRoute] string id)
     {
         return await daprClient.GetStateAsync<dynamic>(storeName, id);
     }
 
+    //workaround using native cosmos db api sdk
     [HttpGet]
     [Route("objects/all")]
     public async Task<List<dynamic>> GetAll([FromHeader] string country)
