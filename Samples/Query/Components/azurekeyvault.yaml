@@ -1,0 +1,17 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: azurekeyvault
+  namespace: default
+spec:
+  type: secretstores.azure.keyvault
+  version: v1
+  metadata:
+  - name: vaultName
+    value: fwDaysKeyVaultDemo
+  - name: spnTenantId
+    value: "0ba94874-61f5-4667-baa5-eb92f0d08bc0"
+  - name: spnClientId
+    value: "29d974d6-235e-44d8-a844-52309d7b40cd"
+  - name: spnCertificateFile
+    value : "./Components/fwDays-cert.pfx"

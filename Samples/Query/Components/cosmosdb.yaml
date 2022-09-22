@@ -1,0 +1,21 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: cosmosdb
+  namespace: default
+spec:
+  type: state.azure.cosmosdb
+  version: v1
+  metadata:
+  - name: url
+    value: https://fwdaysaccount.documents.azure.com:443/
+  - name: masterKey
+    secretKeyRef:
+      name: cosmosdb-masterKey
+      key:  cosmosdb-masterKey
+  - name: database
+    value: fwDaysDB
+  - name: collection
+    value: fwDaysContainer
+auth:
+  secretStore: azurekeyvault
