@@ -113,6 +113,9 @@ Create a web api project called Request
 Renaming controller, remove testing data, add Dapr Components include sample methods
 dotnet add package Dapr.Client --version 1.8.0
 
+---
+Generating testing data
+https://www.utilities-online.info/base64
 
 ----
 Testing locally
