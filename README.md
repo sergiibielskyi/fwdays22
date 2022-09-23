@@ -137,4 +137,5 @@ az deployment group create \
 
 ----
 https://github.com/microsoft/azure-container-apps/issues/116
+https://learn.microsoft.com/en-us/cli/azure/containerapp/dapr?view=azure-cli-latest#az-containerapp-dapr-enable
 az containerapp dapr enable -n uploadblobapp -g "$NAME_RG" --dapr-app-id uploadblobapp --dapr-http-max-request-size 16
