@@ -1,0 +1,21 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: uploadblobapp
+  namespace: default
+spec:
+  type: bindings.azure.blobstorage
+  version: v1
+  metadata:
+  - name: storageAccount
+    value: "fwdaysdemostorage"
+  - name: storageAccessKey
+    secretKeyRef:
+      name: blob-masterKey
+      key:  blob-masterKey
+  - name: container
+    value: "objects"
+  - name: decodeBase64
+    value: true
+auth:
+  secretStore: azurekeyvault

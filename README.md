@@ -72,7 +72,7 @@ dotnet add package Dapr.Client --version 1.8.0
 
 ----
 Run DAPR locally to validate query app
-dapr run --app-id cosmosdb --app-port 5298 --dapr-http-port 50001 --components-path Components dotnet run
+dapr run --app-id cosmosdbapp --app-port 5298 --dapr-http-port 50001 --components-path Components dotnet run
 
 ----
 Create Docker file 
@@ -91,6 +91,47 @@ dotnet add package Microsoft.Azure.Cosmos --version 3.30.1
 ----
 Add new methods using cosmosDB API to explain results
 
+https://github.com/microsoft/azure-container-apps/issues/155 
 
 ----
 Sample 2. Issues with using http requests
+
+Create Blob Storage
+Parameters
+STORAGE_ACCOUNT="fwdaysdemostorage"
+CONTAINER_NAME="objects"
+
+az deployment group create \
+--resource-group "$NAME_RG" \
+--template-file ./DevOps/Blob_storage_service.bicep \
+--parameters \
+  storageAccountName="$STORAGE_ACCOUNT" \
+  containerName="$CONTAINER_NAME"
+
+----
+Create a web api project called Request
+Renaming controller, remove testing data, add Dapr Components include sample methods
+dotnet add package Dapr.Client --version 1.8.0
+
+
+----
+Testing locally
+dapr run --app-id uploadblobapp --app-port 5298 --dapr-http-port 50001 --components-path Components dotnet run
+
+increase max http request
+dapr run --app-id uploadblobapp --app-port 5298 --dapr-http-port 50001 --dapr-http-max-request-size 16 --components-path Components dotnet run
+
+----
+Create Docker file 
+docker build --platform linux/amd64 -t request:latest -f ./Request/dockerfile .
+
+----
+Create Container Apps
+az deployment group create \
+--resource-group "$NAME_RG" \
+--template-file ./DevOps/Main.bicep
+
+
+----
+https://github.com/microsoft/azure-container-apps/issues/116
+az containerapp dapr enable -n uploadblobapp -g "$NAME_RG" --dapr-app-id uploadblobapp --dapr-http-max-request-size 16

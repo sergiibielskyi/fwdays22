@@ -12,7 +12,7 @@ public class QueryController : ControllerBase
     
     private readonly ILogger<QueryController> _logger;
     private DaprClient daprClient;
-    private const string storeName = "cosmosdb";
+    private const string storeName = "cosmosdbapp";
     private readonly string EndpointUri = "https://fwdaysaccount.documents.azure.com:443/";
     private readonly string PrimaryKey = "";
     private readonly string databaseId = "fwDaysDB";
@@ -24,7 +24,7 @@ public class QueryController : ControllerBase
     public QueryController(ILogger<QueryController> logger, IDataService dataService)
     {
         daprClient = new DaprClientBuilder().Build();
-        dbClient = new CosmosClient(EndpointUri, PrimaryKey);
+        //dbClient = new CosmosClient(EndpointUri, PrimaryKey);
         iDataService = dataService;
         _logger = logger;
     }

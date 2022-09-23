@@ -1,4 +1,5 @@
 param cosmosDBimagePath string = 'martapp.azurecr.io/query:latest'
+param blobImagePath string = 'martapp.azurecr.io/request:latest'
 param resourceGroupName string = 'fwdays22'
 param cosmosdbUrl string = 'https://fwdaysaccount.documents.azure.com:443/'
 param location string = 'westeurope'
@@ -6,13 +7,15 @@ param environmentName string = 'fwdays-env'
 param environmentId string = '/subscriptions/edb3ed55-b7ed-423c-bf55-6c6ba95cc54f/resourceGroups/fwdays22/providers/Microsoft.App/managedenvironments/fwdays-env'
 param collectionName string = 'fwDaysContainer'
 param cosmosDBName string = 'fwDaysDB'
+param accountName string = 'fwdaysdemostorage'
 param containerRegistry string = 'martapp.azurecr.io'
 
 
 var cnf = json(loadTextContent('../config.json'))
 var containerAdmin = cnf.containerAdmin
 var containerKey = cnf.containerKey
-var cosmosKey = cnf.secretValue
+var cosmosKey = cnf.secretValueCosmosDB
+var accountKey = cnf.secretValueBlob
 
 //Create Dapr CosmosDB State Management
 module cosmosdbapp 'Cosmosdb.bicep' = {
@@ -32,7 +35,7 @@ module cosmosdbapp 'Cosmosdb.bicep' = {
 }
 
 resource cosmosDBComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-03-01' = {
-  name: '${environmentName}/cosmosdb'
+  name: '${environmentName}/cosmosdbapp'
   properties: {
     componentType: 'state.azure.cosmosdb'
     version: 'v1'
@@ -67,8 +70,8 @@ resource cosmosDBComponent 'Microsoft.App/managedEnvironments/daprComponents@202
 }
 
 // Create Dapr Blob State Management
-/*module blobqueue 'Blob.bicep' = {
-  name: 'blobqueue'
+module uploadblobapp 'Blob.bicep' = {
+  name: 'uploadblobapp'
   params: {
     environmentId: environmentId
     location: location
@@ -83,10 +86,10 @@ resource cosmosDBComponent 'Microsoft.App/managedEnvironments/daprComponents@202
   ]
 }
 
-resource blobComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-01-01-preview' = {
-  name: '${environmentName}/blobqueue'
+resource blobComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-03-01' = {
+  name: '${environmentName}/uploadblobapp'
   properties: {
-    componentType: 'bindings.azure.storagequeues'
+    componentType: 'bindings.azure.blobstorage'
     version: 'v1'
     secrets: [
       {
@@ -104,22 +107,18 @@ resource blobComponent 'Microsoft.App/managedEnvironments/daprComponents@2022-01
         secretRef: 'account-key'
       }
       {
-        name: 'queue'
+        name: 'container'
         value: 'objects'
       }
       {
-        name: 'ttlInSeconds'
-        value: '60'
-      }
-      {
         name: 'decodeBase64'
-        value: 'false'
+        value: 'true'
       }
     ]
     scopes: [
-      blobqueue.name
+      uploadblobapp.name
     ]
   }
-}*/
+}
 
 

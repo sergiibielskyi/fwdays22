@@ -5,10 +5,12 @@ param enabledForDiskEncryption bool = false
 param enabledForTemplateDeployment bool = false
 param tenantId string = subscription().tenantId
 param objectId string
-param secretName string = 'cosmosdb-masterKey'
+param secretNameCosmosDB string = 'cosmosdb-masterKey'
+param secretNameBlob string = 'blob-masterKey'
 
 var cnf = json(loadTextContent('../config.json'))
-var secretValue = cnf.secretValue
+var secretValueCosmosDB = cnf.secretValueCosmosDB
+var secretValueBlob = cnf.secretValueBlob
 
 param secretPermissions array = [
   'GET'
@@ -46,10 +48,18 @@ resource kv 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
   }
 }
 
-resource secret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
+resource secretCosmosDB 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
   parent: kv
-  name: secretName
+  name: secretNameCosmosDB
   properties: {
-    value: secretValue
+    value: secretValueCosmosDB
+  }
+}
+
+resource secretBlob 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
+  parent: kv
+  name: secretNameBlob
+  properties: {
+    value: secretValueBlob
   }
 }
