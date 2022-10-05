@@ -177,4 +177,6 @@ az containerapp dapr enable -n uploadblobapp -g "$NAME_RG" --dapr-app-id uploadb
 
 
 
-Note kill the process kill -9 $(lsof -ti:port)
+Note 
+kill the process kill -9 $(lsof -ti:port)
+If container apps does not see dapr component, you can re-create revision of apps
