@@ -10,8 +10,8 @@ spec:
   - name: vaultName
     value: fwDaysKeyVaultDemo
   - name: spnTenantId
-    value: "0ba94874-61f5-4667-baa5-eb92f0d08bc0"
+    value: "336eb426-4877-4e1d-98c3-87f51d33b11a"
   - name: spnClientId
-    value: "29d974d6-235e-44d8-a844-52309d7b40cd"
+    value: "949aa694-991b-4919-ac64-4ad9217772f4"
   - name: spnCertificateFile
-    value : "./Components/fwDays-cert.pfx"
+    value : "./Components/fwdayskey.pfx"

@@ -30,7 +30,11 @@ public class QueryController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult HealthCheck() => Ok();
+    public IActionResult HealthCheck()  
+    {
+         _logger.LogInformation("System is healthy");
+        return Ok();
+    }
 
     [HttpGet]
     [Route("objects/query")]
@@ -59,7 +63,7 @@ public class QueryController : ControllerBase
     }
 
     //workaround using native cosmos db api sdk
-    [HttpGet]
+    /*[HttpGet]
     [Route("objects/all")]
     public async Task<List<dynamic>> GetAll([FromHeader] string country)
     {
@@ -67,5 +71,5 @@ public class QueryController : ControllerBase
          _logger.LogInformation(objects.Count.ToString());
 
         return objects;
-    }
+    }*/
 }

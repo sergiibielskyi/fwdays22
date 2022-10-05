@@ -31,10 +31,37 @@ az deployment group create \
 Upload the sample data
 From prepared testing data VolcanoData.json from TestingData folder
 
+----
+
+Create Blob Storage
+Parameters
+STORAGE_ACCOUNT="fwdaysdemostorage"
+CONTAINER_NAME="objects"
+
+az deployment group create \
+--resource-group "$NAME_RG" \
+--template-file ./DevOps/Blob_storage_service.bicep \
+--parameters \
+  storageAccountName="$STORAGE_ACCOUNT" \
+  containerName="$CONTAINER_NAME"
+
 
 ----
 
-Create Key Vault
+Create Azure Container Registry
+Timing around 1 min
+Parameters
+ACR="fwdays"
+
+az deployment group create \
+--resource-group "$NAME_RG" \
+--template-file ./DevOps/ACR.bicep \
+--parameters \
+  acr="$ACR"
+
+----
+
+Create App registration
 Timing around 1 min
 
 APP_NAME="fwDays-demo"
@@ -50,6 +77,13 @@ SERVICE_PRINCIPAL_ID=$(az ad sp create \
   | jq -r .id)
 
 
+----
+Update config.json to use right keys
+
+---
+Create Key Vault
+Timing around 1 min
+
 az deployment group create \
 --resource-group "$NAME_RG" \
 --template-file ./DevOps/Key_Vault.bicep \
@@ -57,7 +91,7 @@ az deployment group create \
    objectId="$SERVICE_PRINCIPAL_ID"
 
 Grant own permissions to generate certificate and all permissions in secrets
-Generate certificate and upload to project directory PFX and azure app registration
+Generate certificate and upload to project directory PFX and CER to azure app registration
 
 ----
 Sample 1. Issues with query usage
@@ -69,6 +103,9 @@ dotnet new webapi in Query directory
 Renaming controller, remove testing data, add Dapr Components include sample methods
 dotnet add package Dapr.Client --version 1.8.0
 
+----
+Configure Components to use new certificate and new App registration ID and Tenant ID
+
 
 ----
 Run DAPR locally to validate query app
@@ -79,10 +116,13 @@ Create Docker file
 docker build --platform linux/amd64 -t query:latest -f ./Query/dockerfile .
 
 ----
+Upload new docker image to ACR
+
+----
 Create Container Apps
 az deployment group create \
 --resource-group "$NAME_RG" \
---template-file ./DevOps/Main.bicep
+--template-file ./DevOps/ContainerAppsCosmosDB.bicep
 
 ----
 Added Cosmos DB API as workaround
@@ -96,22 +136,13 @@ https://github.com/microsoft/azure-container-apps/issues/155
 ----
 Sample 2. Issues with using http requests
 
-Create Blob Storage
-Parameters
-STORAGE_ACCOUNT="fwdaysdemostorage"
-CONTAINER_NAME="objects"
-
-az deployment group create \
---resource-group "$NAME_RG" \
---template-file ./DevOps/Blob_storage_service.bicep \
---parameters \
-  storageAccountName="$STORAGE_ACCOUNT" \
-  containerName="$CONTAINER_NAME"
-
 ----
 Create a web api project called Request
 Renaming controller, remove testing data, add Dapr Components include sample methods
 dotnet add package Dapr.Client --version 1.8.0
+
+----
+Configure Components to use new certificate and new App registration ID and Tenant ID
 
 ---
 Generating testing data
@@ -129,10 +160,13 @@ Create Docker file
 docker build --platform linux/amd64 -t request:latest -f ./Request/dockerfile .
 
 ----
+Upload new docker image to ACR
+
+----
 Create Container Apps
 az deployment group create \
 --resource-group "$NAME_RG" \
---template-file ./DevOps/Main.bicep
+--template-file ./DevOps/ContainerAppsBlob.bicep
 
 
 ----
@@ -140,3 +174,7 @@ https://github.com/microsoft/azure-container-apps/issues/116
 https://github.com/microsoft/azure-container-apps/issues/411#issuecomment-1260117320
 https://learn.microsoft.com/en-us/cli/azure/containerapp/dapr?view=azure-cli-latest#az-containerapp-dapr-enable
 az containerapp dapr enable -n uploadblobapp -g "$NAME_RG" --dapr-app-id uploadblobapp --dapr-http-max-request-size 16
+
+
+
+Note kill the process kill -9 $(lsof -ti:port)
