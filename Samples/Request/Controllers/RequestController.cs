@@ -33,7 +33,11 @@ public class RequestController : ControllerBase
 	}
 
     [HttpGet]
-    public IActionResult HealthCheck() => Ok();
+    public IActionResult HealthCheck()  
+    {
+         _logger.LogInformation("System is healthy");
+        return Ok();
+    }
 
 /*
     [HttpPost]
