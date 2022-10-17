@@ -42,8 +42,8 @@ resource cosmosdbapp 'Microsoft.App/containerApps@2022-03-01' = {
           image: imagePath
           name: 'query'
           resources: {
-            cpu: '0.5'
-            memory: '1Gi'
+            cpu: 1
+            memory: '2Gi'
           }
         }
       ]

@@ -42,8 +42,8 @@ resource uploadblobapp 'Microsoft.App/containerApps@2022-03-01' = {
           image: imagePath
           name: 'request'
           resources: {
-            cpu: '0.5'
-            memory: '1Gi'
+            cpu: 1
+            memory: '2Gi'
           }
         }
       ]
