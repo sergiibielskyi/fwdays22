@@ -115,6 +115,14 @@ dapr run --app-id cosmosdbapp --app-port 5298 --dapr-http-port 50001 --component
 Create Docker file 
 docker build --platform linux/amd64 -t query:latest -f ./Query/dockerfile .
 
+---
+Tag Docker file 
+docker tag query:latest fwdays.azurecr.io/query:latest
+
+---
+Push Docker file 
+docker push fwdays.azurecr.io/query:latest
+
 ----
 Upload new docker image to ACR
 
